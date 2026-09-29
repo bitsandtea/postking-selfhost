@@ -1,0 +1,210 @@
+/* Plain CSS, no framework, no brand theming — see README: this renderer
+   stays an unbranded starter that only fixes positioning. No colors are
+   read from the brand's own config; a fork brings its own design. */
+
+:root {
+  --bg: #ffffff;
+  --fg: #111111;
+  --muted: #666666;
+  --border: #dddddd;
+  --card-bg: #fafafa;
+  --radius: 0.25rem;
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, Roboto, sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111111;
+    --fg: #eeeeee;
+    --muted: #999999;
+    --border: #333333;
+    --card-bg: #1a1a1a;
+  }
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--font-sans); line-height: 1.6; overflow-x: hidden; }
+img, video { max-width: 100%; height: auto; display: block; }
+h1, h2, h3, p, a, dd { overflow-wrap: break-word; }
+
+.pk-container { max-width: 72rem; margin-inline: auto; padding-inline: 1rem; }
+.pk-article { max-width: 42rem; margin-inline: auto; padding-inline: 1rem; }
+
+/* A `raw_html` page/side-page's own imported markup (see
+   components/RawHtmlPage.tsx) — its own inline styles/classes do the real
+   layout work; this just keeps it readable at the page's default width. */
+.pk-raw-html { max-width: 72rem; margin-inline: auto; padding: 1rem; }
+
+/* Header: sticky, logo + site name left, nav links wrapping on the right */
+.site-header { position: sticky; top: 0; background: var(--bg); border-bottom: 1px solid var(--border); z-index: 10; }
+.site-header-bar {
+  max-width: 72rem;
+  margin-inline: auto;
+  padding: 0.75rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+.site-logo { width: 2rem; height: 2rem; object-fit: contain; }
+.site-name { font-weight: 700; margin-right: auto; }
+/* Nested flex containers (the nav's own <a> + <ul>) default to a content-based
+   minimum width that can exceed the viewport instead of wrapping — min-width:
+   0 lets them shrink and actually wrap at narrow widths. */
+.site-header nav { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 1rem; min-width: 0; max-width: 100%; }
+.site-header nav ul { display: flex; flex-wrap: wrap; gap: 0.5rem 1rem; list-style: none; margin: 0; padding: 0; min-width: 0; }
+.site-header nav a { text-decoration: none; color: inherit; }
+.site-header nav a:hover { text-decoration: underline; }
+
+/* Sections: generous padding + separator; hero centered with a larger h1 */
+.pk-section { max-width: 72rem; margin-inline: auto; padding: 3rem 1rem; border-bottom: 1px solid var(--border); }
+.pk-section h2 { font-size: 1.75rem; }
+.pk-section-hero { text-align: center; }
+.pk-section-hero h1, .pk-section-hero h2 { font-size: clamp(2rem, 5vw, 3.25rem); }
+
+/* CTA links: plain, unbranded button — 1px currentColor border, no fill */
+.pk-section > a {
+  display: inline-block;
+  border: 1px solid currentColor;
+  background: transparent;
+  color: inherit;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius);
+  text-decoration: none;
+  font: inherit;
+}
+
+.yt-thumb { display: block; position: relative; }
+
+/* Lists of objects (features/pricing/testimonials/videos) -> card grid;
+   simple lists of strings stay as normal lists (see components/Data.tsx). */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: 1.25rem;
+  list-style: none;
+  padding: 0;
+  margin: 1.5rem 0;
+  text-align: left;
+}
+.card-grid > li { border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; background: var(--card-bg); }
+.card-grid img, .card-grid video { border-radius: var(--radius); margin-bottom: 0.75rem; }
+
+/* Link rows (nav-shaped lists of {href, title}, e.g. footer link columns) */
+.link-list { display: flex; flex-wrap: wrap; gap: 1rem; list-style: none; padding: 0; margin: 0.5rem 0; min-width: 0; }
+.link-list > li { min-width: 0; max-width: 100%; overflow-wrap: anywhere; }
+.link-list-vertical { flex-direction: column; gap: 0.4rem; }
+
+/* FAQ */
+.faq-list { margin: 1.5rem 0; text-align: left; }
+.faq-list details { border-bottom: 1px solid var(--border); padding: 0.75rem 0; }
+.faq-list summary { cursor: pointer; font-weight: 600; }
+
+/* Avatar: a resolved photo, or (no asset) an initials-in-a-circle fallback —
+   never a broken image. Used in the hero "loved by" row, blog author meta,
+   and blog index/category cards. */
+.avatar { width: 2rem; height: 2rem; border-radius: 999px; object-fit: cover; flex-shrink: 0; }
+.avatar-fallback {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+.author { display: inline-flex; align-items: center; gap: 0.4rem; }
+
+/* Avatar row (hero lovedBy testimonials) — small overlapping circles */
+.avatar-row { display: flex; list-style: none; padding: 0; margin: 0.5rem 0; justify-content: center; }
+.avatar-row li { margin-left: -0.5rem; }
+.avatar-row li:first-child { margin-left: 0; }
+.avatar-row .avatar { border: 2px solid var(--bg); }
+
+/* Section media: slot assets no content field already rendered */
+.section-media { display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: 1rem; margin-top: 1.5rem; }
+.section-media img, .section-media video { border-radius: var(--radius); width: 100%; }
+
+/* Pre-footer CTA banner (content.footer.preFooterCta) */
+.pre-footer-cta { max-width: 72rem; margin-inline: auto; padding: 2rem 1rem; text-align: center; border-top: 1px solid var(--border); }
+
+/* Footer: muted, top border, columns collapse to one on mobile */
+.site-footer { border-top: 1px solid var(--border); padding: 2.5rem 1rem; color: var(--muted); font-size: 0.9rem; }
+.site-footer-inner { max-width: 72rem; margin-inline: auto; display: grid; gap: 2rem; }
+.site-footer-brand p { max-width: 32rem; }
+.site-footer-contact p { margin: 0.15rem 0; }
+.site-footer-columns { display: grid; grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); gap: 1.5rem; }
+.site-footer-column h3 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.04em; margin: 0 0 0.5rem; color: var(--fg); }
+.site-footer-legal { display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; align-items: center; border-top: 1px solid var(--border); padding-top: 1rem; }
+
+/* Blog: card grid index, meta line + prose on the article */
+.pk-article > dl { display: flex; flex-wrap: wrap; gap: 0.35rem 1rem; color: var(--muted); font-size: 0.9rem; margin: 0.5rem 0 1.5rem; }
+.pk-article > dl dt, .pk-article > dl dd { display: inline; margin: 0; }
+.pk-article > dl dt { font-weight: 600; }
+.pk-article > dl dt::after { content: ": "; }
+.pk-article :is(h1, h2, h3, h4) { line-height: 1.25; margin-top: 2rem; }
+.pk-article blockquote { border-left: 3px solid var(--border); margin: 1rem 0; padding: 0.25rem 1rem; color: var(--muted); }
+.pk-article pre { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem; overflow-x: auto; }
+.pk-article table { display: block; overflow-x: auto; border-collapse: collapse; }
+.pk-article th, .pk-article td { border: 1px solid var(--border); padding: 0.5rem; }
+
+/* Any other real table (comparisonMatrix, a comparison side page's matrix/
+   scorecard, a custom-block "html" table) — same treatment, not scoped to
+   blog prose. */
+table { border-collapse: collapse; margin: 1.5rem 0; max-width: 100%; }
+.pk-section table, .pk-container table { display: block; overflow-x: auto; }
+th, td { border: 1px solid var(--border); padding: 0.5rem 0.75rem; text-align: left; }
+th { background: var(--card-bg); }
+
+@media (max-width: 480px) {
+  .site-header-bar { padding: 0.5rem 0.75rem; }
+  .pk-section { padding: 2rem 1rem; }
+  .site-footer-columns { grid-template-columns: 1fr; }
+}
+
+/* Buttons + capture form: neutral, unbranded */
+.button {
+  display: inline-block;
+  border: 1px solid currentColor;
+  background: transparent;
+  color: inherit;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius);
+  font: inherit;
+  cursor: pointer;
+}
+.capture-form { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; align-items: center; margin: 1rem 0; }
+.capture-form input { font: inherit; padding: 0.5rem 0.75rem; border: 1px solid var(--border); border-radius: var(--radius); min-width: 0; flex: 1 1 14rem; max-width: 22rem; background: transparent; color: inherit; }
+.capture-form small { flex-basis: 100%; color: var(--muted, inherit); }
+
+/* Blog CTA cards: promoted side pages (components/blog/PromotedSidePageCta)
+   and conversion pills (components/blog/ConversionPillCard), spliced into
+   the article body by components/blog/ArticleBodyWithCtas. ".pk-cta" is the
+   default "strong" bordered card; ".pk-cta-light" (conversion pills and any
+   "light"-style promoted CTA) is a slimmer inline callout. */
+.pk-cta { margin: 2rem 0; padding: 1.25rem 1.5rem; border: 1px solid var(--border); border-radius: var(--radius); background: var(--card-bg); }
+.pk-cta-light { padding: 0 0 0 1rem; border: none; border-left: 2px solid var(--border); background: transparent; border-radius: 0; }
+.pk-cta-header { font-weight: 600; margin: 0 0 0.35rem; }
+.pk-cta-body { margin: 0 0 0.75rem; color: var(--muted); }
+.pk-cta .button, .pk-cta-light .button { margin: 0; }
+
+/* Tool run form + result (app/tools/[slug]/page.tsx,
+   components/Tool/{ToolRunner,ToolResult}.tsx) — a labelled field stack,
+   reusing ".button" for the submit control and the result screen's actions. */
+.tool-form { display: grid; gap: 1rem; max-width: 32rem; margin: 1.5rem 0; }
+.tool-form label { display: block; font-weight: 600; margin-bottom: 0.35rem; }
+.tool-form input, .tool-form select, .tool-form textarea {
+  width: 100%;
+  font: inherit;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: transparent;
+  color: inherit;
+}
+.tool-form textarea { resize: vertical; }
+
+.tool-result { max-width: 32rem; margin: 1.5rem 0; padding: 1.25rem; border: 1px solid var(--border); border-radius: var(--radius); background: var(--card-bg); }
+.tool-result pre { overflow-x: auto; }
+.tool-result-actions { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; margin-top: 1rem; }
